@@ -1,8 +1,8 @@
 # useState
 
-Legenda:
-* Apa: **useState** itu mengijinkan kita untuk mengguanak lokal state didalam *function*.
-* Bagaimana : `const [state, setState] = useState(initialStateValue)`
+Dasar:
+* **useState** itu mengijinkan kita untuk menggunakan lokal state didalam *function*.
+* sintaks : `const [state, setState] = useState(initialStateValue)`
 
 ## Deklarasi Varaibel State
 Untuk mendeklarasikan variabel state, sangat mudah pertama import `useState` dari `react` lalu buat variable didalam *function* yang nilainya adalah `useState()` dan didalam itu bisa diisikan nilai state-nya
@@ -93,7 +93,7 @@ const functionName = () => {
 ```
 
 ## Inisialisasi State dengan Function
-Sama seperti inisialisai state berdasarkan tipe data, tapi kali ini kita akan menginisialisasi dengan nilainya berupa *function*
+Sama seperti inisialisai state berdasarkan tipe data, hanya saja nilai inisialisasinya berupa *function*
 ```js
 ...
 const functionName = () => {
