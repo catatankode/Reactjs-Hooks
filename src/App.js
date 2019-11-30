@@ -1,26 +1,28 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React,{useState} from 'react';
 
-function App() {
+const App = () => {
+  const [state, setState] = useState({age:17, grade:12})
+
+  const handleClick = (value) => setState({
+      ...state,
+      [value]:state[value] + 1
+  })
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <p>Umurku saat ini {state.age} </p>
+      <p>Aku duduk di kelas {state.grade}</p>
+
+      <div>
+        <button onClick={e => handleClick('age')}>
+            Umurku bertambah
+        </button>
+        <button onClick={e => handleClick('grade')}>
+            Aku naik kelas
+        </button>
+      </div>
     </div>
-  );
+  )
 }
 
 export default App;
