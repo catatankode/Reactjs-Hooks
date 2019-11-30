@@ -13,7 +13,7 @@ const functionName = () => {
     const [count] = useState(0); // mendeklarasikan nilai state
     return(
         <div>
-            {count} {/* menampilkan nilai state-nya */}
+            Nilai dari variable :{count} {/* menampilkan nilai state-nya */}
         </div>
     )
 }
@@ -26,7 +26,7 @@ const functionName = () => {
     const [count, setCount] = useState(0);// mendeklarasikan state dan update state variable
     return(
         <div>
-            {count} {/* memanggil nilai state-nya*/}
+            Nilai dari variable: {count} {/* memanggil nilai state-nya*/}
             <button onClick = {() => setCount(count+1)}> {/* mengupdate nialai state nya */}
         </div>
     )
