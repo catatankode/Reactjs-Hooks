@@ -1,165 +1,126 @@
-# useEffect
+# useReducer
 
 :key: Dasar:
-* **useEffect** fungsi yang digunakan untuk menjalankan *side effects*.
-* sintaks : `useEffect(effectFunction, arrayDependencies)`
+* **useReducer** adalah alternative untuk useState yang lebih kompleks, atau bisa disebut state management dalam Hooks.
+* sintaks : `const [state, dispatch] = useReducer(reducer, initialState, lazyInitFunction)`
 
-## Basic Side Effect
-Pada dasarnya useEffect akan dijalankan setalah proses return selesai dijalankan dan akan berubah jika terjadi perubahan. Seperti contoh berikut kita akan merubah judul halaman. 
-```js
-import React, {useState, useEffect} from 'react' // import useEffect
-const App = () => {
-  const [age, setAge] = useState(0)
-  
-  const handleClick = () => setAge(age + 1)
-
-  useEffect(() => {
-    document.title = `Clicked ${age} times`
-  })
-
-  return (
-    <div>
-        <button onClick={handleClick}>Update Title!! </button>
-    </div>
-  );
-}
-```
-Untuk lebih paham, kita bandingkan dengan *life cycle* di *class component*
+## Basic Reducer
+>useReducer sangat mirip dengan redux.
+Berbeda dengan `useState`, untuk menggunakan `useReducer` cukup panggil dengan *reducer* dan *initialState*, useReducer otomatis akan mengembalikan properti **state** dan **dispatch** *function* 
 ```js
 ...
-class App extends React.component {
-    constructor(props){
-    super(props);
-    this.state = {
-        count:0
-    }}
+import React, {useReducer} from 'react' // import useReducer
 
-    // akan dijalankan setealah proses return atau render selesai 
-    componentDidMount(){
-        document.title = `Clicked ${this.state.count} times`
+const initialState = (0); // untuk menginisialisaikan state
+
+const reducer = (state, action) => {
+  switch (action) {
+    case 'INCREMENT':
+        return state + 1
+    case 'DECREMENT':
+        return state - 1
+    case 'RESET':
+        return initialState
+    default:
+      return state
+  }
+}
+
+const App = () => {
+    const [count, dispatch] = useReducer(reducer, initialState);   
+    return(
+        <div>
+            <p> Count {count} </p>
+            <button onClick={() => dispatch('INCREMENT')}>Increment</button>
+            <button onClick={() => dispatch('DECREMENT')}>Decrement</button>
+            <button onClick={() => dispatch('RESET')}>Reset</button>
+        </div>
+    );
+}
+
+export default App;
+```
+
+## Inisialisai State Lazy
+useReducer mengambil parameter fungsi ketiga. Kita dapat menginisialisasi keadaan dari fungsi ini, dan apa pun yang dikembalikan dari fungsi ini dikembalikan sebagai objek keadaan. Fungsi ini akan dipanggil dengan initialState - parameter kedua.
+```js
+import React, {useReducer} from 'react' // import useReducer
+
+const initializeState = () => ({
+  count: 100
+}) // untuk parameter ketiga sebagai nilai awal
+
+const initialState = {count:0}; // untuk menginisialisaikan state
+const reducer = (state, action) => {
+  switch (action) {
+    case 'INCREMENT':
+        return {count:state.count + 1}
+    case 'DECREMENT':
+        return {count:state.count - 1}
+    case 'RESET':
+        return {count:100}
+    default:
+      return state.count
+  }
+}
+
+const App = () => {
+    const [state, dispatch] = useReducer(reducer, initialState, initializeState);   
+    return(
+        <div>
+            <p> Count {state.count} </p>
+            <button onClick={() => dispatch('INCREMENT')}>Increment</button>
+            <button onClick={() => dispatch('DECREMENT')}>Decrement</button>
+            <button onClick={() => dispatch('RESET')}>Reset</button>
+        </div>
+    );
+}
+
+export default App;
+```
+
+## useReducer with Complex State
+```js
+ 
+import React, {useReducer} from 'react';
+
+const initialState = {
+    firstCounter:0,
+    secondCounter: 10
+};
+const reducer = (state, action) => {
+    switch(action.type){
+        case "INCREMENT":
+            return {...state, firstCounter:state.firstCounter + action.value}
+        case "DECREMENT":
+            return {...state, firstCounter:state.firstCounter - action.value}
+        case "SECOND_INCREMENT":
+            return {...state, secondCounter:state.secondCounter + action.value}
+        case "SECOND_DECREMENT":
+            return {...state, secondCounter:state.secondCounter - action.value}
+        case "RESET":
+            return initialState
+        default:
+            return state
     }
-    // akan dijalankan jika ada perubahan
-    componentDidUpdate(){
-        document.title = `Clicked ${this.state.count} times`
-    }
+}
+
+const App = () => {
+    const [count, dispatch] = useReducer(reducer, initialState);
     
-    render(){
-        return(
-            <div>
-                <button onClick={() => this.setState({count: this.state.count + 1})}> Update Title!! </button>
-            </div>
-        );
-    }
+    return(
+        <div>
+            <p> Count {count.firstCounter} <br /> 
+                Count {count.secondCounter}
+            </p>
+            <button onClick={() => dispatch({type: 'INCREMENT', value:1})}>Increment</button>
+            <button onClick={() => dispatch({type: 'DECREMENT', value:1})}>Decrement</button>
+            <button onClick={() => dispatch({type: 'SECOND_INCREMENT', value:1})}>secondIncrement</button>
+            <button onClick={() => dispatch({type: 'SECOND_DECREMENT', value:1})}>secondDecrement</button>
+
+            <button onClick={() => dispatch({type: 'RESET'})}>Reset</button>
+        </div>
+    );
 }
-``` 
 
-## useEffect Sekali panggil
-Untuk menggunakan useEffect hanya sekali panggil setelah return selesai yaitu hanya tambahkan *array* kosong pada parameter kedua seperti ini
-```js
-import React, {useState, useEffect} from 'react' // import useEffect
-const App = () => {
-  const [age, setAge] = useState(0)
-  
-  const handleClick = () => setAge(age + 1)
-
-  useEffect(() => {
-    document.title = `Clicked ${age} times`
-  }, []) // tambahkan array kosong, artinya hanya akan dieksekusi sekali saja walaupun ada perubahan
-
-  return (
-    <div>
-        <button onClick={handleClick}>Update Title!! </button>
-    </div>
-  );
-}
-```
-
-## useEffect with Cleanup
-Ini sama halnya jika di **class component** namanya `componentWillUnmount()`. Di useEffect untuk menjalankan hal itu tinggal gunakan `return` didalam useEffect seperti ini 
-```js
-...
-
-const App = () => {
-  useEffect(() => {
-    const clicked = () => console.log('window clicked')
-    window.addEventListener('click', clicked)
-
-    // return a clean-up function / unmount
-    return () => {
-      window.removeEventListener('click', clicked)
-    }
-  }, [])
-
-  return (
-    <div>
-      klik dimana aja akan memberikan pesan di console 
-    </div>
-  )
-}
-```
-
-## useEffect sesuai kondisi
-Disamping kita bisa mengeksekusi hanya sekali, kali ini kita akan mengeksekusi sesuai kodisi saja, misalnya hanya untuk state tertentu saja seperti di bawah ini:
-
-```js
-...
-const App = () => {
-  const [randomNumber, setRandomNumber] = useState(0)
-  const [effectLogs, setEffectLogs] = useState([])
-
-  useEffect(
-    () => {
-      setEffectLogs(prevEffectLogs => [...prevEffectLogs, 'effect fn has been invoked'])
-    },
-    [randomNumber] // useEffect akan mengalami perubahan sesuai kondisi ini
-  )
-
-  return (
-    <div>
-      <h1>{randomNumber}</h1>
-      <button
-        onClick={() => {
-          setRandomNumber(Math.random())
-        }}
-      >
-        Generate random number!
-      </button>
-      <div>
-        {effectLogs.map((effect, index) => (
-          <div key={index}>{'|'.repeat(index) + effect}</div>
-        ))}
-      </div>
-    </div>
-  )
-}
-```
-kondisi diatas bisa digunakan untuk banyak kondisi, tinggal masukkan kedalam `array`. 
-
-## Multiple Effect
-Multiple useEffect dapat terjadi dalam komponen fungsional seperti yang ditunjukkan di bawah ini:
-
-```js
-...
-const App = () => {
-  // useEffect pertama
-  useEffect(() => {
-    const clicked = () => console.log('window clicked')
-    window.addEventListener('click', clicked)
-
-    return () => {
-      window.removeEventListener('click', clicked)
-    }
-  }, [])
-
-  // useEffect kedua
-  useEffect(() => {
-    console.log("another useEffect call");
-  })
-
-  return (  
-    <div>
-      Untuk melihat hasilnya buka console di browser
-    </div>
-  ) 
-}
-```
+export default App;

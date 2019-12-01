@@ -1,26 +1,43 @@
-import React, {useEffect} from 'react' // import useEffect
+ 
+import React, {useReducer} from 'react';
+
+const initialState = {
+    firstCounter:0,
+    secondCounter: 10
+};
+const reducer = (state, action) => {
+    switch(action.type){
+        case "INCREMENT":
+            return {...state, firstCounter:state.firstCounter + action.value}
+        case "DECREMENT":
+            return {...state, firstCounter:state.firstCounter - action.value}
+        case "SECOND_INCREMENT":
+            return {...state, secondCounter:state.secondCounter + action.value}
+        case "SECOND_DECREMENT":
+            return {...state, secondCounter:state.secondCounter - action.value}
+        case "RESET":
+            return initialState
+        default:
+            return state
+    }
+}
 
 const App = () => {
-  // useEffect pertama
-  useEffect(() => {
-    const clicked = () => console.log('window clicked')
-    window.addEventListener('click', clicked)
+    const [count, dispatch] = useReducer(reducer, initialState);
+    
+    return(
+        <div>
+            <p> Count {count.firstCounter} <br /> 
+                Count {count.secondCounter}
+            </p>
+            <button onClick={() => dispatch({type: 'INCREMENT', value:1})}>Increment</button>
+            <button onClick={() => dispatch({type: 'DECREMENT', value:1})}>Decrement</button>
+            <button onClick={() => dispatch({type: 'SECOND_INCREMENT', value:1})}>secondIncrement</button>
+            <button onClick={() => dispatch({type: 'SECOND_DECREMENT', value:1})}>secondDecrement</button>
 
-    return () => {
-      window.removeEventListener('click', clicked)
-    }
-  }, [])
-
-  // useEffect kedua
-  useEffect(() => {
-    console.log("another useEffect call");
-  })
-
-  return (  
-    <div>
-      Untuk melihat hasilnya buka console di browser
-    </div>
-  ) 
+            <button onClick={() => dispatch({type: 'RESET'})}>Reset</button>
+        </div>
+    );
 }
 
 export default App;
