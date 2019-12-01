@@ -1,6 +1,6 @@
 # useContext
 
-Dasar:
+:key:Dasar:
 * **useContext** mempermudah kita untuk mengkonsumsi `context comsumer`.
 * sintaks : `const contextValue = useContext(contextObject)`
 
