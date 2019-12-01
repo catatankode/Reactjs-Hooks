@@ -1,10 +1,11 @@
 # useContext
 
-:key:Dasar:
+:key: Dasar:
 * **useContext** mempermudah kita untuk mengkonsumsi `context comsumer`.
 * sintaks : `const contextValue = useContext(contextObject)`
 
 useContext memiliki API yang lebih sederhana dibandingkan dengan `myContext.consumer`, untuk lebih jelasnya ayo kita lihat konsumsi *context* dengan *cosumer* terlebih dahulu
+
 1. di file `App.js`
 ```js
 import React from 'react';
@@ -21,8 +22,8 @@ function App() {
 }
 
 export default App;
-```
-Context Provider component digunakan sebagai context parent yang bisa digunakan untuk anak component
+``` 
+Context Provider component digunakan sebagai context parent yang bisa digunakan untuk anak component.
 
 2.src/components/`ComponentA.js`
 ```js
@@ -38,6 +39,7 @@ export default function ComponentA() {
 }
 ```
 Dikasus ini kita tidak akan mengkonsumsi di anak ComponentB melainkan di ComponentC, sehingga di ComponentB tidak perlu dipanggil providernya.
+
 3. src/components/`ComponentC.js`
 ```js
 import React from 'react';
