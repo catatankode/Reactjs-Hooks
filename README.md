@@ -98,4 +98,68 @@ const App = () => {
 }
 ```
 
+## useEffect sesuai kondisi
+Disamping kita bisa mengeksekusi hanya sekali, kali ini kita akan mengeksekusi sesuai kodisi saja, misalnya hanya untuk state tertentu saja seperti di bawah ini:
+
+```js
+...
+const App = () => {
+  const [randomNumber, setRandomNumber] = useState(0)
+  const [effectLogs, setEffectLogs] = useState([])
+
+  useEffect(
+    () => {
+      setEffectLogs(prevEffectLogs => [...prevEffectLogs, 'effect fn has been invoked'])
+    },
+    [randomNumber] // useEffect akan mengalami perubahan sesuai kondisi ini
+  )
+
+  return (
+    <div>
+      <h1>{randomNumber}</h1>
+      <button
+        onClick={() => {
+          setRandomNumber(Math.random())
+        }}
+      >
+        Generate random number!
+      </button>
+      <div>
+        {effectLogs.map((effect, index) => (
+          <div key={index}>{'|'.repeat(index) + effect}</div>
+        ))}
+      </div>
+    </div>
+  )
+}
+```
+kondisi diatas bisa digunakan untuk banyak kondisi, tinggal masukkan kedalam `array`. 
+
 ## Multiple Effect
+Multiple useEffect dapat terjadi dalam komponen fungsional seperti yang ditunjukkan di bawah ini:
+
+```js
+...
+const App = () => {
+  // useEffect pertama
+  useEffect(() => {
+    const clicked = () => console.log('window clicked')
+    window.addEventListener('click', clicked)
+
+    return () => {
+      window.removeEventListener('click', clicked)
+    }
+  }, [])
+
+  // useEffect kedua
+  useEffect(() => {
+    console.log("another useEffect call");
+  })
+
+  return (  
+    <div>
+      Untuk melihat hasilnya buka console di browser
+    </div>
+  ) 
+}
+```
