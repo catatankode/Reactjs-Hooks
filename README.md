@@ -1,109 +1,101 @@
-# useState
+# useEffect
 
 Dasar:
-* **useState** itu mengijinkan kita untuk menggunakan lokal state didalam *function*.
-* sintaks : `const [state, setState] = useState(initialStateValue)`
+* **useEffect** fungsi yang digunakan untuk menjalankan *side effects*.
+* sintaks : `useEffect(effectFunction, arrayDependencies)`
 
-## Deklarasi Varaibel State
-Untuk mendeklarasikan variabel state, sangat mudah pertama import `useState` dari `react` lalu buat variable didalam *function* yang nilainya adalah `useState()` dan didalam itu bisa diisikan nilai state-nya
+## Basic Side Effect
+Pada dasarnya useEffect akan dijalankan setalah proses return selesai dijalankan dan akan berubah jika terjadi perubahan. Seperti contoh berikut kita akan merubah judul halaman. 
 ```js
-import React, {useState} from 'react' // import useState
+import React, {useState, useEffect} from 'react' // import useEffect
+const App = () => {
+  const [age, setAge] = useState(0)
+  
+  const handleClick = () => setAge(age + 1)
 
-const functionName = () => {
-    const [count] = useState(0); // mendeklarasikan nilai state
-    return(
-        <div>
-            Nilai dari variable :{count} {/* menampilkan nilai state-nya */}
-        </div>
-    )
-}
-```
-## Update Variabel State
-Untuk mengupdate nilai state nya cukup tambahkan nama variabel di array ke kedua, agar lebih mudah  namanya samakan dengan nama deklarasinya tapi tambahkan *set* didepannya misalnya, nama state nya *count* makan nama update state-nya *setCount*, agar mudah aja digunakan.
-```js
-...
-const functionName = () => {
-    const [count, setCount] = useState(0);// mendeklarasikan state dan update state variable
-    return(
-        <div>
-            Nilai dari variable: {count} {/* memanggil nilai state-nya*/}
-            <button onClick = {() => setCount(count+1)}> {/* mengupdate nialai state nya */}
-        </div>
-    )
-}
-```
-
-## Beberapa Variabel State 
-Kita juga bisa mendeklarasikan banyak state dan mengupdatenya, sebagai contoh:
-```js
-...
-const functionName = () => {
-  const [age, setAge] = useState(17)
-  const [grade, setGrade] = useState(12)
-
-  const handleAge = () => setAge(age + 1)
-  const handleGrade = () => setGrade(grade + 1)
+  useEffect(() => {
+    document.title = `Clicked ${age} times`
+  })
 
   return (
     <div>
-      <p>Umurku saat ini {age} </p>
-      <p>Aku duduk di kelas {grade}</p>
+        <button onClick={handleClick}>Update Title!! </button>
+    </div>
+  );
+}
+```
+Untuk lebih paham, kita bandingkan dengan *life cycle* di *class component*
+```js
+...
+class App extends React.component {
+    constructor(props){
+    super(props);
+    this.state = {
+        count:0
+    }}
 
-      <div>
-        <button onClick={handleAge}>
-            Umurku bertambah
-        </button>
-        <button onClick={handleGrade}>
-            Aku naik kelas
-        </button>
-      </div>
+    // akan dijalankan setealah proses return atau render selesai 
+    componentDidMount(){
+        document.title = `Clicked ${this.state.count} times`
+    }
+    // akan dijalankan jika ada perubahan
+    componentDidUpdate(){
+        document.title = `Clicked ${this.state.count} times`
+    }
+    
+    render(){
+        return(
+            <div>
+                <button onClick={() => this.setState({count: this.state.count + 1})}> Update Title!! </button>
+            </div>
+        );
+    }
+}
+``` 
+
+## useEffect Sekali panggil
+Untuk menggunakan useEffect hanya sekali panggil setelah return selesai yaitu hanya tambahkan *array* kosong pada parameter kedua seperti ini
+```js
+import React, {useState, useEffect} from 'react' // import useEffect
+const App = () => {
+  const [age, setAge] = useState(0)
+  
+  const handleClick = () => setAge(age + 1)
+
+  useEffect(() => {
+    document.title = `Clicked ${age} times`
+  }, []) // tambahkan array kosong, artinya hanya akan dieksekusi sekali saja walaupun ada perubahan
+
+  return (
+    <div>
+        <button onClick={handleClick}>Update Title!! </button>
+    </div>
+  );
+}
+```
+
+## useEffect with Cleanup
+Ini sama halnya jika di **class component** namanya `componentWillUnmount()`. Di useEffect untuk menjalankan hal itu tinggal gunakan `return` didalam useEffect seperti ini 
+```js
+...
+
+const App = () => {
+  useEffect(() => {
+    const clicked = () => console.log('window clicked')
+    window.addEventListener('click', clicked)
+
+    // return a clean-up function / unmount
+    return () => {
+      window.removeEventListener('click', clicked)
+    }
+  }, [])
+
+  return (
+    <div>
+      klik dimana aja akan memberikan pesan di console 
     </div>
   )
 }
 ```
 
-## Variabel State dalam bentuk Object
-Seperti halnya tipe data *string* dan *number*, kita juga bisa menggunakan tipe data *object* sebagai nilai awal dari `useState`
-```js
-...
-const functionName = () => {
-    const [state, setState] = useState({age:17, grade:12})
-
-  const handleClick = (value) => setState({
-      ...state,
-      [value]:state[value] + 1
-  })
-
-  return (
-    <div>
-      <p>Umurku saat ini {state.age} </p>
-      <p>Aku duduk di kelas {state.grade}</p>
-
-      <div>
-        <button onClick={() => handleClick('age')}>
-            Umurku bertambah
-        </button>
-        <button onClick={() => handleClick('grade')}>
-            Aku naik kelas
-        </button>
-      </div>
-    </div>
-  )
-}
-```
-
-## Inisialisasi State dengan Function
-Sama seperti inisialisai state berdasarkan tipe data, hanya saja nilai inisialisasinya berupa *function*
-```js
-...
-const functionName = () => {
-    () => {
-  const [token] = useState(() => {
-    let token = window.localStorage.getItem("my-token");
-    return token || "default#-token#"
-  })
-
-  return <div>Tokennya adalah {token}</div>
-}
-```
-
+## Multiple Effect
