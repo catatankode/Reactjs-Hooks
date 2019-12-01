@@ -6,6 +6,7 @@
 
 ## Basic Reducer
 >useReducer sangat mirip dengan redux.
+
 Berbeda dengan `useState`, untuk menggunakan `useReducer` cukup panggil dengan *reducer* dan *initialState*, useReducer otomatis akan mengembalikan properti **state** dan **dispatch** *function* 
 ```js
 ...
