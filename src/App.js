@@ -1,26 +1,14 @@
-import React, {useEffect} from 'react' // import useEffect
+import React from 'react';
+import ComponentA from './components/ComponentA';
 
-const App = () => {
-  // useEffect pertama
-  useEffect(() => {
-    const clicked = () => console.log('window clicked')
-    window.addEventListener('click', clicked)
+export const UserContext = React.createContext();
 
-    return () => {
-      window.removeEventListener('click', clicked)
-    }
-  }, [])
-
-  // useEffect kedua
-  useEffect(() => {
-    console.log("another useEffect call");
-  })
-
-  return (  
+function App() {
+  return (
     <div>
-      Untuk melihat hasilnya buka console di browser
+        <ComponentA />
     </div>
-  ) 
+  );
 }
 
 export default App;

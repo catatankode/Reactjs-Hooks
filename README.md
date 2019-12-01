@@ -1,165 +1,75 @@
-# useEffect
+# useContext
 
 Dasar:
-* **useEffect** fungsi yang digunakan untuk menjalankan *side effects*.
-* sintaks : `useEffect(effectFunction, arrayDependencies)`
+* **useContext** mempermudah kita untuk mengkonsumsi `context comsumer`.
+* sintaks : `const contextValue = useContext(contextObject)`
 
-## Basic Side Effect
-Pada dasarnya useEffect akan dijalankan setalah proses return selesai dijalankan dan akan berubah jika terjadi perubahan. Seperti contoh berikut kita akan merubah judul halaman. 
+useContext memiliki API yang lebih sederhana dibandingkan dengan `myContext.consumer`, untuk lebih jelasnya ayo kita lihat konsumsi *context* dengan *cosumer* terlebih dahulu
+1. di file `App.js`
 ```js
-import React, {useState, useEffect} from 'react' // import useEffect
-const App = () => {
-  const [age, setAge] = useState(0)
-  
-  const handleClick = () => setAge(age + 1)
+import React from 'react';
+import ComponentA from './components/ComponentA';
 
-  useEffect(() => {
-    document.title = `Clicked ${age} times`
-  })
+export const UserContext = React.createContext(); // Membuat context provider
 
+function App() {
   return (
     <div>
-        <button onClick={handleClick}>Update Title!! </button>
+        <ComponentA />
     </div>
   );
 }
+
+export default App;
 ```
-Untuk lebih paham, kita bandingkan dengan *life cycle* di *class component*
+Context Provider component digunakan sebagai context parent yang bisa digunakan untuk anak component
+
+2.src/components/`ComponentA.js`
 ```js
-...
-class App extends React.component {
-    constructor(props){
-    super(props);
-    this.state = {
-        count:0
-    }}
+import React from 'react';
+import ComponentB from './ComponentB';
 
-    // akan dijalankan setealah proses return atau render selesai 
-    componentDidMount(){
-        document.title = `Clicked ${this.state.count} times`
-    }
-    // akan dijalankan jika ada perubahan
-    componentDidUpdate(){
-        document.title = `Clicked ${this.state.count} times`
-    }
-    
-    render(){
-        return(
-            <div>
-                <button onClick={() => this.setState({count: this.state.count + 1})}> Update Title!! </button>
-            </div>
-        );
-    }
-}
-``` 
-
-## useEffect Sekali panggil
-Untuk menggunakan useEffect hanya sekali panggil setelah return selesai yaitu hanya tambahkan *array* kosong pada parameter kedua seperti ini
-```js
-import React, {useState, useEffect} from 'react' // import useEffect
-const App = () => {
-  const [age, setAge] = useState(0)
-  
-  const handleClick = () => setAge(age + 1)
-
-  useEffect(() => {
-    document.title = `Clicked ${age} times`
-  }, []) // tambahkan array kosong, artinya hanya akan dieksekusi sekali saja walaupun ada perubahan
-
-  return (
-    <div>
-        <button onClick={handleClick}>Update Title!! </button>
-    </div>
-  );
+export default function ComponentA() {
+    return(
+        <div>
+            <ComponentB />
+        </div>
+    );
 }
 ```
-
-## useEffect with Cleanup
-Ini sama halnya jika di **class component** namanya `componentWillUnmount()`. Di useEffect untuk menjalankan hal itu tinggal gunakan `return` didalam useEffect seperti ini 
+Dikasus ini kita tidak akan mengkonsumsi di anak ComponentB melainkan di ComponentC, sehingga di ComponentB tidak perlu dipanggil providernya.
+3. src/components/`ComponentC.js`
 ```js
-...
+import React from 'react';
+import {UserContext} from '../App'; // memenggil providernya
 
-const App = () => {
-  useEffect(() => {
-    const clicked = () => console.log('window clicked')
-    window.addEventListener('click', clicked)
-
-    // return a clean-up function / unmount
-    return () => {
-      window.removeEventListener('click', clicked)
-    }
-  }, [])
-
-  return (
-    <div>
-      klik dimana aja akan memberikan pesan di console 
-    </div>
-  )
+export default function ComponentC (){
+    return(
+        <div>
+            <UserContext.Consumer> {/* untuk menggunakannya harus dibungkus dengan Consumer agar menandakan ini anak nya*/}
+                {
+                    value => {
+                        return <div>This is a {value}</div>
+                    }
+                }
+            </UserContext.Consumer>
+        </div>
+    );
 }
 ```
+untuk mengkosumsi *context* kita harus membungkusnya dengan <UserContext.Consumer> agar bisa menggunkaan *context* didalam tag tersebut.
 
-## useEffect sesuai kondisi
-Disamping kita bisa mengeksekusi hanya sekali, kali ini kita akan mengeksekusi sesuai kodisi saja, misalnya hanya untuk state tertentu saja seperti di bawah ini:
-
+Jika menggunakan `useContext` kita bisa menggunakannya tanpa harus membungkusnya dengan sebuah tag, hanya perlu import `useCOntext` dan deklarasikan dalam sebuah variable kemudian untuk menggunakannya cukup panggil nama variablenya seperti ini: 
 ```js
-...
-const App = () => {
-  const [randomNumber, setRandomNumber] = useState(0)
-  const [effectLogs, setEffectLogs] = useState([])
+import React, {useContext} from 'react';
+import {UserContext} from '../App';
 
-  useEffect(
-    () => {
-      setEffectLogs(prevEffectLogs => [...prevEffectLogs, 'effect fn has been invoked'])
-    },
-    [randomNumber] // useEffect akan mengalami perubahan sesuai kondisi ini
-  )
-
-  return (
-    <div>
-      <h1>{randomNumber}</h1>
-      <button
-        onClick={() => {
-          setRandomNumber(Math.random())
-        }}
-      >
-        Generate random number!
-      </button>
-      <div>
-        {effectLogs.map((effect, index) => (
-          <div key={index}>{'|'.repeat(index) + effect}</div>
-        ))}
-      </div>
-    </div>
-  )
-}
-```
-kondisi diatas bisa digunakan untuk banyak kondisi, tinggal masukkan kedalam `array`. 
-
-## Multiple Effect
-Multiple useEffect dapat terjadi dalam komponen fungsional seperti yang ditunjukkan di bawah ini:
-
-```js
-...
-const App = () => {
-  // useEffect pertama
-  useEffect(() => {
-    const clicked = () => console.log('window clicked')
-    window.addEventListener('click', clicked)
-
-    return () => {
-      window.removeEventListener('click', clicked)
-    }
-  }, [])
-
-  // useEffect kedua
-  useEffect(() => {
-    console.log("another useEffect call");
-  })
-
-  return (  
-    <div>
-      Untuk melihat hasilnya buka console di browser
-    </div>
-  ) 
+export default function ComponentC (){
+    const A = useContext(UserContext);
+    return(
+        <div>
+            {A}
+        </div>
+    );
 }
 ```
