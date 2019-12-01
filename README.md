@@ -1,6 +1,6 @@
 # useEffect
 
-Dasar:
+:key: Dasar:
 * **useEffect** fungsi yang digunakan untuk menjalankan *side effects*.
 * sintaks : `useEffect(effectFunction, arrayDependencies)`
 
