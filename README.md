@@ -9,7 +9,7 @@ Untuk mendeklarasikan variabel state, sangat mudah pertama import `useState` dar
 ```js
 import React, {useState} from 'react' // import useState
 
-const functionName = () => {
+const App = () => {
     const [count] = useState(0); // mendeklarasikan nilai state
     return(
         <div>
@@ -22,7 +22,7 @@ const functionName = () => {
 Untuk mengupdate nilai state nya cukup tambahkan nama variabel di array ke kedua, agar lebih mudah  namanya samakan dengan nama deklarasinya tapi tambahkan *set* didepannya misalnya, nama state nya *count* makan nama update state-nya *setCount*, agar mudah aja digunakan.
 ```js
 ...
-const functionName = () => {
+const App = () => {
     const [count, setCount] = useState(0);// mendeklarasikan state dan update state variable
     return(
         <div>
@@ -37,7 +37,7 @@ const functionName = () => {
 Kita juga bisa mendeklarasikan banyak state dan mengupdatenya, sebagai contoh:
 ```js
 ...
-const functionName = () => {
+const App = () => {
   const [age, setAge] = useState(17)
   const [grade, setGrade] = useState(12)
 
@@ -66,7 +66,7 @@ const functionName = () => {
 Seperti halnya tipe data *string* dan *number*, kita juga bisa menggunakan tipe data *object* sebagai nilai awal dari `useState`
 ```js
 ...
-const functionName = () => {
+const App = () => {
     const [state, setState] = useState({age:17, grade:12})
 
   const handleClick = (value) => setState({
@@ -96,7 +96,7 @@ const functionName = () => {
 Sama seperti inisialisai state berdasarkan tipe data, hanya saja nilai inisialisasinya berupa *function*
 ```js
 ...
-const functionName = () => {
+const App = () => {
     () => {
   const [token] = useState(() => {
     let token = window.localStorage.getItem("my-token");
