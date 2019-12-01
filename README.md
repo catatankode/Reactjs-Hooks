@@ -1,6 +1,6 @@
 # useState
 
-Dasar:
+:key: Dasar:
 * **useState** itu mengijinkan kita untuk menggunakan lokal state didalam *function*.
 * sintaks : `const [state, setState] = useState(initialStateValue)`
 
