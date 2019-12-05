@@ -23,7 +23,6 @@ function App() {
 
 export default App;
 ``` 
-Context Provider component digunakan sebagai context parent yang bisa digunakan untuk anak component.
 
 2.src/components/`ComponentA.js`
 ```js
@@ -32,13 +31,13 @@ import ComponentB from './ComponentB';
 
 export default function ComponentA() {
     return(
-        <div>
+        <UserContext.Provider value={'Valaue of Context'}>
             <ComponentB />
-        </div>
+        </UserContext.Provider>
     );
 }
 ```
-Dikasus ini kita tidak akan mengkonsumsi di anak ComponentB melainkan di ComponentC, sehingga di ComponentB tidak perlu dipanggil providernya.
+Context Provider component digunakan sebagai context parent yang bisa digunakan untuk anak component.
 
 3. src/components/`ComponentC.js`
 ```js
